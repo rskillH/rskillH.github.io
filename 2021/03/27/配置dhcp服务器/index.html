@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="rskill-H">
+
+
+
+
+
+<title>配置 dhcp 服务器 | rskill-H</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">rskill-H Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">文章</a>
+                
+                    <a class="menu-item" href="/category">归类</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">rskill-H Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">文章</a>
+                
+                    <a class="menu-item" href="/category">归类</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">配置 dhcp 服务器</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">rskill-H</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2021 March 27&nbsp;&nbsp;16:54:06</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/category/%E7%AC%94%E8%AE%B0/">笔记</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>虚拟机：<a target="_blank" rel="noopener" href="https://www.vmware.com/products/workstation-pro.html">vm</a>  &nbsp; 系统：<a target="_blank" rel="noopener" href="http://mirrors.163.com/centos/7.9.2009/isos/x86_64/">CentOS 7</a> &nbsp; <a href="">Windows 2008</a> </p>
+<ol>
+<li><p>配置ip<br> 使用 <code>nmtui</code> 命令配置网卡信息</p>
+</li>
+<li><p>安装dhcp服务器包 <br> <code>rpm -q dhcp </code>查询软件包是否已被安装 <br> <code>yum install -y dhcp </code>进行安装 <br> 尝试启动 <code>systemctl start dhcpd</code> <br> 查看状态 <code>systemctl status dhcpd</code></p>
+</li>
+<li><p>根据实际情况写配置文件<br> <code>vim /etc/dhcp/dhcpd.conf</code></p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ddns-update-style none;  //设置动态DNS更新模式</span><br><span class="line">subnet 192.168.0.0 netmask 255.255.255.0&#123;</span><br><span class="line">range  192.168.0.10 192.168.0.120;</span><br><span class="line">option routers 192.168.0.10;</span><br><span class="line">option subnet-mask 255.255.255.0;</span><br><span class="line">option domain-name-servers 192.168.0.1; //设置DNS服务器地址</span><br><span class="line">default-lease-time 86400; //默认租约时间</span><br><span class="line">max-lease-time 604800;  //最大租约时间</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42303254/article/details/89477125">Linux下dhcpd服务中主配置文件/etc/dhcp/dhcpd.conf文件中参数详解</a></p>
+</li>
+<li><p>检查语法 <br> <code>dhcpd -t</code> 检测配置文件是否出错 <br> 尝试启动 <code>systemctl start dhcpd</code> <br> 查看状态 <code>systemctl status dhcpd</code></p>
+</li>
+<li><p>启动服务<br> 设置防火墙</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# firewall-cmd --add-service=dhcp --permanent</span><br><span class="line">success</span><br><span class="line">[root@localhost ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure></li>
+<li><p>给客户端固定ip地址<br>在<code>/etc/dhcp/dhcp.conf</code> 文件内后面加上下方内容即可</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">group&#123; </span><br><span class="line">  option routers 192.168.0.1;  //申明网关(192.168.0.1)</span><br><span class="line">    host host1&#123;</span><br><span class="line">     hardware ethernet MAC地址;   //此处MAC地址为实际MAC地址</span><br><span class="line">     fixed-address 客户端IP地址;  //此处ip地址为实际ip地址</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Linux/"># Linux</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2021/03/28/DNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%AD%A3%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90/">DNS服务器正反向解析</a>
+            
+            
+            <a class="next" rel="next" href="/2021/03/27/%E6%9C%AC%E5%9C%B0yum%E6%BA%90%E9%85%8D%E7%BD%AE/">本地 yum 源配置</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© rskill-H </span>
+        <!-- <span>© rskill-H | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span> -->
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

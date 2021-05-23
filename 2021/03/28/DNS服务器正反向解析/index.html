@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="rskill-H">
+
+
+
+
+
+<title>DNS服务器正反向解析 | rskill-H</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">rskill-H Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">文章</a>
+                
+                    <a class="menu-item" href="/category">归类</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">rskill-H Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">文章</a>
+                
+                    <a class="menu-item" href="/category">归类</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">DNS服务器正反向解析</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">rskill-H</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2021 March 28&nbsp;&nbsp;14:03:32</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/category/%E7%AC%94%E8%AE%B0/">笔记</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DNS  即Domain Name System（域名系统）的缩写，它是一种将ip地址转换成对应的主机名或将主机名转换成与之相对应ip地址的一种机制。其中通过域名解析出ip地址的叫做正向解析，通过ip地址解析出域名的叫做反向解析。  </p>
+<p>正向解析:通过域名解析IP地址<br>反向解析:根据IP地址解析域名</p>
+<p>虚拟机：<a target="_blank" rel="noopener" href="https://www.vmware.com/products/workstation-pro.html">vm</a>  &nbsp; 系统：<a target="_blank" rel="noopener" href="http://mirrors.163.com/centos/7.9.2009/isos/x86_64/">CentOS 7</a> &nbsp; <a href="">Windows 2008</a> </p>
+<ol>
+<li><p>配置ip </p>
+<p> 使用 <code>nmtui</code> 命令配置 <br> 本机ip:    <code>192.168.1.10/24</code> <br> 本机网关:  <code>192.168.1.254</code> <br> dns:       <code>192.168.1.10</code></p>
+</li>
+<li><p>安装dns服务的软件包 <code>bind</code> 和 <code>bind-utils</code></p>
+<p> <code>rpm -q bind bind-utils </code><br> <code>yum install -y bind bind-utils </code><br> 尝试启动 <code>systemctl start named </code><br> 设置防火墙</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# firewall-cmd --add-service=dhcp --permanent</span><br><span class="line">success</span><br><span class="line">[root@localhost ~]# firewall-cmd --reload</span><br><span class="line">success</span><br><span class="line">[root@localhost ~]# setenforce 0 //临时关闭安全机制</span><br><span class="line">[root@localhost ~]# getenforce   //查询安全机制状态</span><br><span class="line">Permissive                       //允许模式</span><br></pre></td></tr></table></figure></li>
+<li><p>根据实际情况修改主配置文件<code>/etc/named.conf </code><br> <code>vim /etc/named.conf </code><br> <img src="https://7.dusays.com/2021/03/28/039d0bed2fd71.jpg" alt="named.conf.jpg"> </p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">listen-on port 53 &#123;  any;  &#125; //监听接口</span><br><span class="line">allow-query &#123;  any;  &#125;    </span><br></pre></td></tr></table></figure>
+<p> 尝试启动 <code>systemctl start named</code></p>
+</li>
+<li><p>修改<code>/etc/named.rfc1912.zones</code> <br> <code>vim /etc/named.rfc1912.zones </code><br> <img src="https://7.dusays.com/2021/03/28/fc506198bcdae.jpg" alt="named.rfc1912.zones.jpg"></p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">“ localhost ”  修改为域名</span><br><span class="line">“ named.localhost ” 修改为区域数据文件的文件名</span><br></pre></td></tr></table></figure>
+<p> 可以使用<code>named-checkconf</code>命令来检查语法 </p>
+</li>
+<li><p>复制并重命名 区域数据文件 <br> <code>cd /var/named</code><br> <code>cp -p named.localhost </code> 上面辅助配置文件中设置的<code>区域数据文件</code>的文件名<br> vim 所复制的新的区域数据文件<br> <img src="https://7.dusays.com/2021/03/28/0ffd65873c3bf.jpg" alt="复制的named.localhost.jpg"><br> 修改根据实际情况进行修改<br> <img src="https://7.dusays.com/2021/03/28/3d98a69722d77.jpg" alt="修改的正向区域数据文件.jpg"> <br> 保存退出 重启dns服务 <code>systemctl restart named</code></p>
+</li>
+<li><p>在客户机内进行测试<br> <img src="https://7.dusays.com/2021/03/28/ba6798c4ed840.jpg" alt="客户机测试.jpg"> </p>
+</li>
+</ol>
+<p>配置反向解析 </p>
+<ol>
+<li>进入辅助配置文件 <code>vim /etc/named.rfc1912.zones</code><br> <img src="https://7.dusays.com/2021/03/28/5be7c916f2335.jpg" alt="named.rfc1912.zones反向解析配置.jpg"><br>  根据实际情况进行修改<br> <img src="https://7.dusays.com/2021/03/28/98da2bc9a4e52.jpg" alt="named.rfc1912.zones反向解析配置修改后.jpg"> </li>
+<li>复制<code>/var/named.loopback </code>文件为辅助配置文件内定义的文件名<code>192.168.1.rev</code>(根据实际情况命名)<br> <img src="https://7.dusays.com/2021/03/28/cfcf50aa32eca.jpg" alt="被复制的named.loopback.jpg"><br> 根据实际情况修改<br> <img src="https://7.dusays.com/2021/03/28/e28a485d421c0.jpg" alt="修改的反向区域数据文件.jpg"> <br> 保存退出 重启服务 <code>systemctl reload named</code></li>
+<li>客户机测试<br> 进入客户机配置好同网段的ip地址后进入cmd 输入<code>nslookup</code>进行测试<br> <img src="https://7.dusays.com/2021/03/28/d8ea68f94e7f8.jpg" alt="反向解析客户机测试图.jpg"></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Linux/"># Linux</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2021/03/29/%E9%85%8D%E7%BD%AEnfs%E6%9C%8D%E5%8A%A1%E5%99%A8/">配置nfs服务器</a>
+            
+            
+            <a class="next" rel="next" href="/2021/03/27/%E9%85%8D%E7%BD%AEdhcp%E6%9C%8D%E5%8A%A1%E5%99%A8/">配置 dhcp 服务器</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© rskill-H </span>
+        <!-- <span>© rskill-H | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span> -->
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

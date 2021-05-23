@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="rskill-H">
+
+
+
+
+
+<title>配置Samba服务器 | rskill-H</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">rskill-H Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">文章</a>
+                
+                    <a class="menu-item" href="/category">归类</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">rskill-H Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">文章</a>
+                
+                    <a class="menu-item" href="/category">归类</a>
+                
+                    <a class="menu-item" href="/tag">标签</a>
+                
+                    <a class="menu-item" href="/about">关于</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">配置Samba服务器</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">rskill-H</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2021 April 6&nbsp;&nbsp;20:45:02</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/category/%E7%AC%94%E8%AE%B0/">笔记</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <ul>
+<li><p>配置ip <br>  <code>nmtui</code>服务器IP 设置为192.168.1.1/24</p>
+</li>
+<li><p>检测系统是否安装samba包 没安装可以挂载光驱进行安装 <br>  rpm –q samba</p>
+</li>
+<li><p>设置防火墙允许运行samba服务，关闭安全机制</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# firewall-cmd --permanent --add-service=samba</span><br><span class="line">success</span><br><span class="line">[root@localhost ~]# firewall-cmd --reload</span><br><span class="line">success</span><br><span class="line">[root@localhost ~]# setenforce 0</span><br><span class="line">[root@localhost ~]# getenforce</span><br><span class="line">Permissive</span><br></pre></td></tr></table></figure></li>
+<li><p>启动服务<code>systemctl start samba </code>进入客户端访问    \192.168.1.1<br>  <img src="https://7.dusays.com/2021/04/06/08bfeae6d287b.png" alt="客户端1.png"></p>
+</li>
+<li><p>进入服务器设置/tmp/share 为共享目录，并修改samba服务配置文件 <code>/etc/samba/smb.conf</code> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# mkdir /tmp/share</span><br><span class="line">[root@localhost ~]# vim /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
+<p>  <img src="https://7.dusays.com/2021/04/06/ed038fdcd6ce6.png" alt="samba服务器配置文件.png"></p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[share]</span><br><span class="line">		comment= share  	//被共享文件夹注释</span><br><span class="line">		path=/tmp/share		//指定文件夹路径</span><br><span class="line">		browseable=yes		//所有人可见</span><br><span class="line">		public=yes			//匿名访问</span><br><span class="line">		writable=yes		//写入权限</span><br></pre></td></tr></table></figure></li>
+<li><p>再次启动samba服务systemctl restart samba<br>  进入客户端验证发现<br>  <img src="https://7.dusays.com/2021/04/06/9a3d5c5259778.png" alt="客户端2.png"><br>  这是因为 /tmp/share 文件夹的读取写入权限没有全部打开 </p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# chmod 777 /tmp/share //权限全部放开</span><br></pre></td></tr></table></figure></li>
+<li><p>在客户机内测试读取写入<br>  <img src="https://7.dusays.com/2021/04/06/a35677a84e916.png" alt="客户端3.png"></p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Linux/"># Linux</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2021/04/12/Blog%E6%B7%BB%E5%8A%A0%E8%BF%90%E8%A1%8C%E5%A4%A9%E6%95%B0/">Blog添加运行天数</a>
+            
+            
+            <a class="next" rel="next" href="/2021/03/29/%E9%85%8D%E7%BD%AEnfs%E6%9C%8D%E5%8A%A1%E5%99%A8/">配置nfs服务器</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© rskill-H </span>
+        <!-- <span>© rskill-H | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span> -->
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
